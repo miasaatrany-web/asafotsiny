@@ -1,0 +1,6 @@
+{
+  "name": "Portfolio Creator",
+  "description": "Create specialized portfolios for Community Managers and Virtual Assistants.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
