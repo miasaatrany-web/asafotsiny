@@ -1,6 +1,6 @@
 import { PortfolioData } from '../types';
 
-export function AdminDashboard({ portfolios, onClose, onLogout }: { portfolios: PortfolioData[], onClose: () => void, onLogout: () => void }) {
+export function AdminDashboard({ portfolios, users, onClose, onLogout }: { portfolios: PortfolioData[], users: string[], onClose: () => void, onLogout: () => void }) {
   return (
     <div className="fixed inset-0 bg-slate-50 p-8 z-50 overflow-auto">
       <div className="max-w-6xl mx-auto">
@@ -13,16 +13,26 @@ export function AdminDashboard({ portfolios, onClose, onLogout }: { portfolios: 
             </button>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {portfolios.length > 0 ? portfolios.map((p, i) => (
-            <div key={i} className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-              <h2 className="text-xl font-black">{p.name}</h2>
-              <p className="text-indigo-600 font-bold mb-4">{p.role}</p>
-              <p className="text-sm text-slate-600">Bio: {p.bio.substring(0, 50)}...</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <h2 className="text-xl font-black mb-4">Utilisateurs Inscrits</h2>
+            <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-2">
+              {users.map((u, i) => <p key={i} className="font-medium text-slate-700">{u}</p>)}
             </div>
-          )) : (
-            <p className="text-slate-500">Aucun portfolio trouvé.</p>
-          )}
+          </div>
+          <div>
+            <h2 className="text-xl font-black mb-4">Portfolios</h2>
+            <div className="space-y-4">
+              {portfolios.length > 0 ? portfolios.map((p, i) => (
+                <div key={i} className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                  <h2 className="text-xl font-black">{p.name}</h2>
+                  <p className="text-indigo-600 font-bold mb-4">{p.role}</p>
+                </div>
+              )) : (
+                <p className="text-slate-500">Aucun portfolio trouvé.</p>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -3,11 +3,16 @@ import { PortfolioForm } from './components/PortfolioForm';
 import { PortfolioPreview } from './components/PortfolioPreview';
 import { RegistrationModal } from './components/RegistrationModal';
 import { AdminDashboard } from './components/AdminDashboard';
-import { PortfolioData } from './types';
+import { MainDashboard } from './components/MainDashboard';
+import { FormationDashboard } from './components/FormationDashboard';
+import { SelectionPage } from './components/SelectionPage';
+import { PortfolioData, Role } from './types';
 
 export default function App() {
   const [userName, setUserName] = useState<string>('');
   const [isAdmin, setIsAdmin] = useState(false);
+  const [role, setRole] = useState<Role | null>(null);
+  const [view, setView] = useState<'main' | 'builder' | 'formation'>('main');
   const [portfolios, setPortfolios] = useState<PortfolioData[]>([]);
   const [portfolio, setPortfolio] = useState<PortfolioData>({
     role: 'Community Manager',
@@ -15,6 +20,7 @@ export default function App() {
     bio: '',
     skills: '',
     projects: [],
+    formation: { metier: '', outillage: '' },
     theme: 'modern',
     socialLinks: [],
     media: []
@@ -33,6 +39,11 @@ export default function App() {
   const handleRegister = (name: string) => {
     setUserName(name);
     localStorage.setItem('userName', name);
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    if (!users.includes(name)) {
+      users.push(name);
+      localStorage.setItem('users', JSON.stringify(users));
+    }
     setPortfolio(prev => ({ ...prev, name }));
     if (name === 'miasaatrany') setIsAdmin(true);
   };
@@ -48,6 +59,8 @@ export default function App() {
     localStorage.removeItem('userName');
     setUserName('');
     setIsAdmin(false);
+    setRole(null);
+    setView('main');
   };
 
   const generateShareLink = () => {
@@ -58,7 +71,11 @@ export default function App() {
   };
 
   if (!userName) return <RegistrationModal onRegister={handleRegister} />;
-  if (isAdmin) return <AdminDashboard portfolios={portfolios} onClose={() => setIsAdmin(false)} onLogout={handleLogout} />;
+  if (isAdmin) return <AdminDashboard portfolios={portfolios} users={JSON.parse(localStorage.getItem('users') || '[]')} onClose={() => setIsAdmin(false)} onLogout={handleLogout} />;
+  if (!role) return <SelectionPage onSelectRole={(r) => { setRole(r); setPortfolio(p => ({ ...p, role: r })); setView('main'); }} onBack={() => setUserName('')} />;
+  
+  if (view === 'main') return <MainDashboard role={role} onSelectAction={setView} onBack={() => setRole(null)} />;
+  if (view === 'formation') return <FormationDashboard role={role} onBack={() => setView('main')} />;
 
   return (
     <div className="min-h-screen bg-slate-50 p-6 md:p-12 text-slate-900">
@@ -72,7 +89,7 @@ export default function App() {
           </div>
         </div>
         <div className="grid md:grid-cols-2 gap-6">
-          <PortfolioForm data={portfolio} onChange={setPortfolio} />
+          <PortfolioForm data={portfolio} onChange={setPortfolio} onBack={() => setView('main')} />
           <PortfolioPreview data={portfolio} />
         </div>
       </div>
